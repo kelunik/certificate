@@ -5,6 +5,8 @@ namespace Kelunik\Certificate;
 class Certificate {
     private $pem;
     private $info;
+    private $issuer;
+    private $subject;
 
     public function __construct($pem) {
         if (!is_string($pem)) {
@@ -16,16 +18,15 @@ class Certificate {
         }
 
         $this->pem = $pem;
-        $this->info = openssl_x509_parse($cert);
-    }
 
-    public function getCommonName() {
-        return $this->info["subject"]["CN"];
+        if (!$this->info = openssl_x509_parse($cert)) {
+            throw new \InvalidArgumentException("Invalid PEM encoded certificate!");
+        }
     }
 
     public function getNames() {
-        $names = [];
         $san = isset($this->info["extensions"]["subjectAltName"]) ? $this->info["extensions"]["subjectAltName"] : "";
+        $names = [];
 
         $parts = array_map("trim", explode(",", $san));
 
@@ -43,16 +44,28 @@ class Certificate {
         return $names;
     }
 
-    public function getIssuerName() {
-        return $this->info["issuer"]["CN"];
+    public function getSubject() {
+        if ($this->subject === null) {
+            $this->subject = new Profile(
+                isset($this->info["subject"]["CN"]) ? $this->info["subject"]["CN"] : null,
+                isset($this->info["subject"]["O"]) ? $this->info["subject"]["O"] : null,
+                isset($this->info["subject"]["C"]) ? $this->info["subject"]["C"] : null
+            );
+        }
+
+        return $this->subject;
     }
 
-    public function getIssuerOrganization() {
-        return $this->info["issuer"]["O"];
-    }
+    public function getIssuer() {
+        if ($this->issuer === null) {
+            $this->issuer = new Profile(
+                isset($this->info["issuer"]["CN"]) ? $this->info["issuer"]["CN"] : null,
+                isset($this->info["issuer"]["O"]) ? $this->info["issuer"]["O"] : null,
+                isset($this->info["issuer"]["C"]) ? $this->info["issuer"]["C"] : null
+            );
+        }
 
-    public function getIssuerCountry() {
-        return $this->info["issuer"]["C"];
+        return $this->issuer;
     }
 
     public function getSerialNumber() {
@@ -81,8 +94,9 @@ class Certificate {
 
     public function __debugInfo() {
         return [
-            "commonName" => $this->getCommonName(),
+            "commonName" => $this->getSubject()->getCommonName(),
             "names" => $this->getNames(),
+            "issuedBy" => $this->getIssuer()->getCommonName(),
             "validFrom" => date("d.m.Y", $this->getValidFrom()),
             "validTo" => date("d.m.Y", $this->getValidTo()),
         ];
