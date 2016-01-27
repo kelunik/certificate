@@ -14,13 +14,13 @@ class Certificate {
         }
 
         if (!$cert = @openssl_x509_read($pem)) {
-            throw new \InvalidArgumentException("Invalid PEM encoded certificate!");
+            throw new InvalidCertificateException("Invalid PEM encoded certificate!");
         }
 
         $this->pem = $pem;
 
         if (!$this->info = openssl_x509_parse($cert)) {
-            throw new \InvalidArgumentException("Invalid PEM encoded certificate!");
+            throw new InvalidCertificateException("Invalid PEM encoded certificate!");
         }
     }
 
@@ -116,17 +116,25 @@ class Certificate {
     }
 
     public static function derToPem($der) {
+        if (!is_string($der)) {
+            throw new \InvalidArgumentException("\$der must be a string, " . gettype($der) . " given.");
+        }
+
         return sprintf(
-            "-----BEGIN CERTIFICATE-----\n%s-----END CERTIFICATE-----",
+            "-----BEGIN CERTIFICATE-----\n%s-----END CERTIFICATE-----\n",
             chunk_split(base64_encode($der), 64, "\n")
         );
     }
 
     public static function pemToDer($pem) {
+        if (!is_string($pem)) {
+            throw new \InvalidArgumentException("\$pem must be a string, " . gettype($pem) . " given.");
+        }
+
         $pattern = "@-----BEGIN CERTIFICATE-----\n([a-zA-Z0-9+/=\n]+)-----END CERTIFICATE-----@";
 
         if (!preg_match($pattern, $pem, $match)) {
-            throw new \RuntimeException("Invalid PEM could not be converted to DER format.");
+            throw new InvalidCertificateException("Invalid PEM could not be converted to DER format.");
         }
 
         return base64_decode(str_replace(["\n", "\r"], "", trim($match[1])));

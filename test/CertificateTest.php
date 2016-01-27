@@ -12,7 +12,9 @@ class CertificateTest extends \PHPUnit_Framework_TestCase {
         $this->assertSame("Let's Encrypt", $cert->getIssuer()->getOrganizationName());
         $this->assertSame("Let's Encrypt Authority X1", $cert->getIssuer()->getCommonName());
         $this->assertFalse($cert->isSelfSigned());
-        $this->assertSame($raw, (string) $cert);
+        $this->assertSame(trim($raw), trim((string) $cert));
+        $this->assertSame(trim($raw), trim($cert->toPem()));
+        $this->assertSame(trim($raw), trim(Certificate::derToPem($cert->toDer())));
         $this->assertSame([
             "commonName" => "www.kelunik.com",
             "names" => ["kelunik.com", "www.kelunik.com"],
@@ -43,10 +45,32 @@ class CertificateTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testDerToPem() {
-        $raw = file_get_contents(__DIR__ . "/data/localhost.pem");
-        $transformed = Certificate::pemToDer(Certificate::derToPem($raw));
+        $pem = file_get_contents(__DIR__ . "/data/localhost.pem");
+        $der = file_get_contents(__DIR__ . "/data/localhost.der");
 
-        $this->assertSame($raw, $transformed);
+        $this->assertSame($der, Certificate::pemToDer($pem));
+        $this->assertSame($pem, Certificate::derToPem($der));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testInvalidDerType() {
+        Certificate::derToPem(0);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testInvalidPemType() {
+        Certificate::pemToDer(0);
+    }
+
+    /**
+     * @expectedException \Kelunik\Certificate\InvalidCertificateException
+     */
+    public function testInvalidPem() {
+        Certificate::pemToDer("");
     }
 
     /**
@@ -57,9 +81,9 @@ class CertificateTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \Kelunik\Certificate\InvalidCertificateException
      */
-    public function testInvalidPem() {
+    public function testInvalidPemConstruct() {
         new Certificate("");
     }
 }
