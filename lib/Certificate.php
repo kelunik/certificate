@@ -81,6 +81,11 @@ class Certificate {
     }
 
     public function getSignatureType() {
+        // https://3v4l.org/Iu3T2
+        if (!isset($this->info["signatureTypeSN"])) {
+            throw new FieldNotSupportedException("Signature type is not supported in this version of PHP. Please update your version to a higher bugfix version. See: https://3v4l.org/Iu3T2");
+        }
+
         return $this->info["signatureTypeSN"];
     }
 

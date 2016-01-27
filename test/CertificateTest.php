@@ -7,7 +7,6 @@ class CertificateTest extends \PHPUnit_Framework_TestCase {
         $raw = file_get_contents(__DIR__ . "/data/kelunik.com.pem");
         $cert = new Certificate($raw);
 
-        $this->assertSame("RSA-SHA256", $cert->getSignatureType());
         $this->assertSame("169720774684715272062536722760177705551647", $cert->getSerialNumber());
         $this->assertSame("US", $cert->getIssuer()->getCountry());
         $this->assertSame("Let's Encrypt", $cert->getIssuer()->getOrganizationName());
@@ -29,6 +28,18 @@ class CertificateTest extends \PHPUnit_Framework_TestCase {
 
         $this->assertSame("localhost", $cert->getSubject()->getCommonName());
         $this->assertTrue($cert->isSelfSigned());
+    }
+
+    public function testSignature() {
+        $raw = file_get_contents(__DIR__ . "/data/kelunik.com.pem");
+        $cert = new Certificate($raw);
+
+        try {
+            $type = $cert->getSignatureType();
+            $this->assertSame("RSA-SHA256", $type);
+        } catch (FieldNotSupportedException $e) {
+            $this->markTestSkipped("Signature type not supported, see https://3v4l.org/Iu3T2");
+        }
     }
 
     public function testDerToPem() {

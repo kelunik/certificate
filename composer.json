@@ -27,7 +27,7 @@
         "ext-openssl": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5",
+        "phpunit/phpunit": "^4.8",
         "fabpot/php-cs-fixer": "^1.9"
     },
     "autoload": {
