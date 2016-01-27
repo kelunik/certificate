@@ -88,6 +88,14 @@ class Certificate {
         return $this->info["subject"] === $this->info["issuer"];
     }
 
+    public function toPem() {
+        return $this->pem;
+    }
+
+    public function toDer() {
+        return self::pemToDer($this->pem);
+    }
+
     public function __toString() {
         return $this->pem;
     }
@@ -100,5 +108,22 @@ class Certificate {
             "validFrom" => date("d.m.Y", $this->getValidFrom()),
             "validTo" => date("d.m.Y", $this->getValidTo()),
         ];
+    }
+
+    public static function derToPem($der) {
+        return sprintf(
+            "-----BEGIN CERTIFICATE-----\n%s-----END CERTIFICATE-----",
+            chunk_split(base64_encode($der), 64, "\n")
+        );
+    }
+
+    public static function pemToDer($pem) {
+        $pattern = "@-----BEGIN CERTIFICATE-----\n([a-zA-Z0-9+/=\n]+)-----END CERTIFICATE-----@";
+
+        if (!preg_match($pattern, $pem, $match)) {
+            throw new \RuntimeException("Invalid PEM could not be converted to DER format.");
+        }
+
+        return base64_decode(str_replace(["\n", "\r"], "", trim($match[1])));
     }
 }

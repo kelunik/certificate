@@ -31,6 +31,13 @@ class CertificateTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue($cert->isSelfSigned());
     }
 
+    public function testDerToPem() {
+        $raw = file_get_contents(__DIR__ . "/data/localhost.pem");
+        $transformed = Certificate::pemToDer(Certificate::derToPem($raw));
+
+        $this->assertSame($raw, $transformed);
+    }
+
     /**
      * @expectedException \InvalidArgumentException
      */

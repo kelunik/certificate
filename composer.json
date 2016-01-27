@@ -1,6 +1,7 @@
 {
     "name": "kelunik/certificate",
-    "description": "Certificate details made easy.",
+    "description": "Access certificate details and transform between different formats.",
+    "type": "library",
     "minimum-stability": "dev",
     "prefer-stable": true,
     "license": "MIT",
@@ -9,6 +10,14 @@
             "name": "Niklas Keller",
             "email": "me@kelunik.com"
         }
+    ],
+    "keywords": [
+        "certificate",
+        "certificates",
+        "openssl",
+        "x509",
+        "pem",
+        "der"
     ],
     "require": {
         "php": ">=5.4",
