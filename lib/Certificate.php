@@ -9,18 +9,28 @@ class Certificate {
     private $subject;
 
     public function __construct($pem) {
-        if (!is_string($pem)) {
-            throw new \InvalidArgumentException("Invalid variable type: Expected string, got " . gettype($pem));
-        }
+        if (is_string($pem)) {
+            if (!$cert = @openssl_x509_read($pem)) {
+                throw new InvalidCertificateException("Invalid PEM encoded certificate!");
+            }
 
-        if (!$cert = @openssl_x509_read($pem)) {
-            throw new InvalidCertificateException("Invalid PEM encoded certificate!");
-        }
+            $this->pem = $pem;
 
-        $this->pem = $pem;
+            if (!$this->info = openssl_x509_parse($cert)) {
+                throw new InvalidCertificateException("Invalid PEM encoded certificate!");
+            }
+        } else if (\is_resource($pem)) {
+            if (\get_resource_type($pem) !== "OpenSSL X.509") {
+                throw new InvalidCertificateException("Invalid resource of type other than 'OpenSSL X.509'!");
+            }
 
-        if (!$this->info = openssl_x509_parse($cert)) {
-            throw new InvalidCertificateException("Invalid PEM encoded certificate!");
+            $this->info = $pem;
+
+            if (\openssl_x509_export($pem, $this->pem) === false) {
+                throw new InvalidCertificateException("Could not convert 'OpenSSL X.509' resource to PEM!");
+            }
+        } else {
+            throw new \InvalidArgumentException("Invalid variable type, expected string|resource, got " . gettype($pem));
         }
     }
 
