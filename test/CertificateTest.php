@@ -86,4 +86,13 @@ class CertificateTest extends \PHPUnit_Framework_TestCase {
     public function testInvalidPemConstruct() {
         new Certificate("");
     }
+
+    public function testPemNormalization() {
+        $raw = file_get_contents(__DIR__ . "/data/kelunik.com.pem");
+        $modified = \str_replace("-----\n", "-----\n\n", $raw);
+        $cert = new Certificate($modified);
+
+        $this->assertNotSame(trim($raw), trim($modified));
+        $this->assertSame(trim($raw), trim($cert->toPem()));
+    }
 }
