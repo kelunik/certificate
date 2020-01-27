@@ -1,16 +1,21 @@
-sudo: false
-
 language: php
 
-php:
-  - 5.5
-  - 5.6
-  - 7.0
-  - nightly
+dist: xenial
+
+matrix:
+  include:
+    - php: 5.5
+      dist: trusty
+    - php: 5.6
+    - php: 7.0
+    - php: 7.1
+    - php: 7.2
+    - php: 7.3
+    - php: 7.4
 
 install:
   - composer self-update
-  - composer require satooshi/php-coveralls:dev-master
+  - composer require php-coveralls/php-coveralls --no-update
   - composer install
 
 script:
