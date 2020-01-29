@@ -37,6 +37,14 @@ class CertificateTest extends TestCase
         $this->assertTrue($cert->isSelfSigned());
     }
 
+    public function testKeySha256Hex()
+    {
+        $raw = \file_get_contents(__DIR__ . "/data/kelunik.com.pem");
+        $cert = new Certificate($raw);
+
+        $this->assertSame("7b88147dc2751c5756f81f9b5d07b4e5018fdaab63331db822716c5343bfe220", $cert->getKeySha256Hex());
+    }
+
     public function testSignature()
     {
         $raw = \file_get_contents(__DIR__ . "/data/kelunik.com.pem");
