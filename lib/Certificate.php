@@ -35,6 +35,7 @@ class Certificate
     private $info;
     private $issuer;
     private $subject;
+    private $resource;
 
     public function __construct($pem)
     {
@@ -61,6 +62,8 @@ class Certificate
         if (!$this->info = \openssl_x509_parse($cert)) {
             throw new InvalidCertificateException("Invalid PEM encoded certificate!");
         }
+
+        $this->resource = $cert;
     }
 
     public function getNames()
@@ -138,6 +141,26 @@ class Certificate
     public function isSelfSigned()
     {
         return $this->info["subject"] === $this->info["issuer"];
+    }
+
+    public function getKeySha256Base64(): string
+    {
+        return \base64_encode($this->getKeySha256Raw());
+    }
+
+    public function getKeySha256Hex(): string
+    {
+        return \bin2hex($this->getKeySha256Raw());
+    }
+
+    public function getKeySha256Raw(): string
+    {
+        $publicKeyPem = \openssl_pkey_get_details(\openssl_pkey_get_public($this->resource))['key'];
+
+        $publicKeyBase64 = \array_slice(\explode("\n", $publicKeyPem), 1, -2);
+        $publicKeyRaw = \base64_decode(\implode('', $publicKeyBase64));
+
+        return \hash('sha256', $publicKeyRaw, true);
     }
 
     public function toPem()
