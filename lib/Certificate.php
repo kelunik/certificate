@@ -6,29 +6,29 @@ class Certificate
 {
     public static function derToPem($der)
     {
-        if (!is_string($der)) {
-            throw new \InvalidArgumentException("\$der must be a string, " . gettype($der) . " given.");
+        if (!\is_string($der)) {
+            throw new \InvalidArgumentException("\$der must be a string, " . \gettype($der) . " given.");
         }
 
-        return sprintf(
+        return \sprintf(
             "-----BEGIN CERTIFICATE-----\n%s-----END CERTIFICATE-----\n",
-            chunk_split(base64_encode($der), 64, "\n")
+            \chunk_split(\base64_encode($der), 64, "\n")
         );
     }
 
     public static function pemToDer($pem)
     {
-        if (!is_string($pem)) {
-            throw new \InvalidArgumentException("\$pem must be a string, " . gettype($pem) . " given.");
+        if (!\is_string($pem)) {
+            throw new \InvalidArgumentException("\$pem must be a string, " . \gettype($pem) . " given.");
         }
 
         $pattern = "@-----BEGIN CERTIFICATE-----\n([a-zA-Z0-9+/=\n]+)-----END CERTIFICATE-----@";
 
-        if (!preg_match($pattern, $pem, $match)) {
+        if (!\preg_match($pattern, $pem, $match)) {
             throw new InvalidCertificateException("Invalid PEM could not be converted to DER format.");
         }
 
-        return base64_decode(str_replace(["\n", "\r"], "", trim($match[1])));
+        return \base64_decode(\str_replace(["\n", "\r"], "", \trim($match[1])));
     }
 
     private $pem;
@@ -38,8 +38,8 @@ class Certificate
 
     public function __construct($pem)
     {
-        if (is_string($pem)) {
-            if (!$cert = @openssl_x509_read($pem)) {
+        if (\is_string($pem)) {
+            if (!$cert = @\openssl_x509_read($pem)) {
                 throw new InvalidCertificateException("Invalid PEM encoded certificate!");
             }
         } else {
@@ -50,7 +50,7 @@ class Certificate
 
                 $cert = $pem;
             } else {
-                throw new \InvalidArgumentException("Invalid variable type, expected string|resource, got " . gettype($pem));
+                throw new \InvalidArgumentException("Invalid variable type, expected string|resource, got " . \gettype($pem));
             }
         }
 
@@ -58,7 +58,7 @@ class Certificate
             throw new InvalidCertificateException("Could not convert 'OpenSSL X.509' resource to PEM!");
         }
 
-        if (!$this->info = openssl_x509_parse($cert)) {
+        if (!$this->info = \openssl_x509_parse($cert)) {
             throw new InvalidCertificateException("Invalid PEM encoded certificate!");
         }
     }
@@ -68,18 +68,18 @@ class Certificate
         $san = isset($this->info["extensions"]["subjectAltName"]) ? $this->info["extensions"]["subjectAltName"] : "";
         $names = [];
 
-        $parts = array_map("trim", explode(",", $san));
+        $parts = \array_map("trim", \explode(",", $san));
 
         foreach ($parts as $part) {
-            if (stripos($part, "dns:") === 0) {
-                $names[] = substr($part, 4);
+            if (\stripos($part, "dns:") === 0) {
+                $names[] = \substr($part, 4);
             }
         }
 
-        $names = array_map("strtolower", $names);
-        $names = array_unique($names);
+        $names = \array_map("strtolower", $names);
+        $names = \array_unique($names);
 
-        sort($names);
+        \sort($names);
 
         return $names;
     }
@@ -161,8 +161,8 @@ class Certificate
             "commonName" => $this->getSubject()->getCommonName(),
             "names" => $this->getNames(),
             "issuedBy" => $this->getIssuer()->getCommonName(),
-            "validFrom" => date("d.m.Y", $this->getValidFrom()),
-            "validTo" => date("d.m.Y", $this->getValidTo()),
+            "validFrom" => \date("d.m.Y", $this->getValidFrom()),
+            "validTo" => \date("d.m.Y", $this->getValidTo()),
         ];
     }
 }

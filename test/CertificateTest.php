@@ -8,7 +8,7 @@ class CertificateTest extends TestCase
 {
     public function testCommon()
     {
-        $raw = file_get_contents(__DIR__ . "/data/kelunik.com.pem");
+        $raw = \file_get_contents(__DIR__ . "/data/kelunik.com.pem");
         $cert = new Certificate($raw);
 
         $this->assertSame("169720774684715272062536722760177705551647", $cert->getSerialNumber());
@@ -16,21 +16,21 @@ class CertificateTest extends TestCase
         $this->assertSame("Let's Encrypt", $cert->getIssuer()->getOrganizationName());
         $this->assertSame("Let's Encrypt Authority X1", $cert->getIssuer()->getCommonName());
         $this->assertFalse($cert->isSelfSigned());
-        $this->assertSame(trim($raw), trim((string) $cert));
-        $this->assertSame(trim($raw), trim($cert->toPem()));
-        $this->assertSame(trim($raw), trim(Certificate::derToPem($cert->toDer())));
+        $this->assertSame(\trim($raw), \trim((string) $cert));
+        $this->assertSame(\trim($raw), \trim($cert->toPem()));
+        $this->assertSame(\trim($raw), \trim(Certificate::derToPem($cert->toDer())));
         $this->assertSame([
             "commonName" => "www.kelunik.com",
             "names" => ["kelunik.com", "www.kelunik.com"],
             "issuedBy" => "Let's Encrypt Authority X1",
-            "validFrom" => date("d.m.Y", 1445636100),
-            "validTo" => date("d.m.Y", 1453412100),
+            "validFrom" => \date("d.m.Y", 1445636100),
+            "validTo" => \date("d.m.Y", 1453412100),
         ], $cert->__debugInfo());
     }
 
     public function testLocal()
     {
-        $raw = file_get_contents(__DIR__ . "/data/localhost.pem");
+        $raw = \file_get_contents(__DIR__ . "/data/localhost.pem");
         $cert = new Certificate($raw);
 
         $this->assertSame("localhost", $cert->getSubject()->getCommonName());
@@ -39,7 +39,7 @@ class CertificateTest extends TestCase
 
     public function testSignature()
     {
-        $raw = file_get_contents(__DIR__ . "/data/kelunik.com.pem");
+        $raw = \file_get_contents(__DIR__ . "/data/kelunik.com.pem");
         $cert = new Certificate($raw);
 
         try {
@@ -52,8 +52,8 @@ class CertificateTest extends TestCase
 
     public function testDerToPem()
     {
-        $pem = file_get_contents(__DIR__ . "/data/localhost.pem");
-        $der = file_get_contents(__DIR__ . "/data/localhost.der");
+        $pem = \file_get_contents(__DIR__ . "/data/localhost.pem");
+        $der = \file_get_contents(__DIR__ . "/data/localhost.der");
 
         $this->assertSame($der, Certificate::pemToDer($pem));
         $this->assertSame($pem, Certificate::derToPem($der));
@@ -101,11 +101,11 @@ class CertificateTest extends TestCase
 
     public function testPemNormalization()
     {
-        $raw = file_get_contents(__DIR__ . "/data/kelunik.com.pem");
+        $raw = \file_get_contents(__DIR__ . "/data/kelunik.com.pem");
         $modified = \str_replace("-----\n", "-----\n\n", $raw);
         $cert = new Certificate($modified);
 
-        $this->assertNotSame(trim($raw), trim($modified));
-        $this->assertSame(trim($raw), trim($cert->toPem()));
+        $this->assertNotSame(\trim($raw), \trim($modified));
+        $this->assertSame(\trim($raw), \trim($cert->toPem()));
     }
 }
