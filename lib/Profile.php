@@ -2,26 +2,31 @@
 
 namespace Kelunik\Certificate;
 
-class Profile {
+class Profile
+{
     private $commonName;
-	private $organizationName;
-	private $country;
+    private $organizationName;
+    private $country;
 
-    public function __construct($commonName, $organizationName, $country) {
+    public function __construct($commonName, $organizationName, $country)
+    {
         $this->commonName = $commonName;
-		$this->organizationName = $organizationName;
-		$this->country = $country;
+        $this->organizationName = $organizationName;
+        $this->country = $country;
     }
 
-    public function getCommonName() {
+    public function getCommonName()
+    {
         return $this->commonName;
     }
 
-    public function getOrganizationName() {
+    public function getOrganizationName()
+    {
         return $this->organizationName;
     }
 
-    public function getCountry() {
+    public function getCountry()
+    {
         return $this->country;
     }
 }

@@ -2,8 +2,10 @@
 
 namespace Kelunik\Certificate;
 
-class CertificateTest extends \PHPUnit_Framework_TestCase {
-    public function testCommon() {
+class CertificateTest extends \PHPUnit_Framework_TestCase
+{
+    public function testCommon()
+    {
         $raw = file_get_contents(__DIR__ . "/data/kelunik.com.pem");
         $cert = new Certificate($raw);
 
@@ -24,7 +26,8 @@ class CertificateTest extends \PHPUnit_Framework_TestCase {
         ], $cert->__debugInfo());
     }
 
-    public function testLocal() {
+    public function testLocal()
+    {
         $raw = file_get_contents(__DIR__ . "/data/localhost.pem");
         $cert = new Certificate($raw);
 
@@ -32,7 +35,8 @@ class CertificateTest extends \PHPUnit_Framework_TestCase {
         $this->assertTrue($cert->isSelfSigned());
     }
 
-    public function testSignature() {
+    public function testSignature()
+    {
         $raw = file_get_contents(__DIR__ . "/data/kelunik.com.pem");
         $cert = new Certificate($raw);
 
@@ -44,7 +48,8 @@ class CertificateTest extends \PHPUnit_Framework_TestCase {
         }
     }
 
-    public function testDerToPem() {
+    public function testDerToPem()
+    {
         $pem = file_get_contents(__DIR__ . "/data/localhost.pem");
         $der = file_get_contents(__DIR__ . "/data/localhost.der");
 
@@ -55,39 +60,45 @@ class CertificateTest extends \PHPUnit_Framework_TestCase {
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testInvalidDerType() {
+    public function testInvalidDerType()
+    {
         Certificate::derToPem(0);
     }
 
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testInvalidPemType() {
+    public function testInvalidPemType()
+    {
         Certificate::pemToDer(0);
     }
 
     /**
      * @expectedException \Kelunik\Certificate\InvalidCertificateException
      */
-    public function testInvalidPem() {
+    public function testInvalidPem()
+    {
         Certificate::pemToDer("");
     }
 
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testNonString() {
+    public function testNonString()
+    {
         new Certificate(0);
     }
 
     /**
      * @expectedException \Kelunik\Certificate\InvalidCertificateException
      */
-    public function testInvalidPemConstruct() {
+    public function testInvalidPemConstruct()
+    {
         new Certificate("");
     }
 
-    public function testPemNormalization() {
+    public function testPemNormalization()
+    {
         $raw = file_get_contents(__DIR__ . "/data/kelunik.com.pem");
         $modified = \str_replace("-----\n", "-----\n\n", $raw);
         $cert = new Certificate($modified);

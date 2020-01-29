@@ -2,6 +2,7 @@
 
 namespace Kelunik\Certificate;
 
-class FieldNotSupportedException extends \Exception {
+class FieldNotSupportedException extends \Exception
+{
 
 }
