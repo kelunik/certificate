@@ -1,15 +1,12 @@
 <?php
 
-return Symfony\CS\Config\Config::create()
-    ->level(Symfony\CS\FixerInterface::NONE_LEVEL)
-    ->fixers([
-        "psr2",
-        "-braces",
-        "-psr0",
-    ])
-	->finder(
-		Symfony\CS\Finder\DefaultFinder::create()
-			->in(__DIR__ . "/lib")
-			->in(__DIR__ . "/test")
-	)
-;
+$config = new Amp\CodeStyle\Config();
+$config->getFinder()
+    ->in(__DIR__ . '/lib')
+    ->in(__DIR__ . '/test');
+
+$cacheDir = getenv('TRAVIS') ? getenv('HOME') . '/.php-cs-fixer' : __DIR__;
+
+$config->setCacheFile($cacheDir . '/.php_cs.cache');
+
+return $config;

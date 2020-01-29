@@ -1,8 +1,10 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 namespace Kelunik\Certificate;
 
-class CertificateTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class CertificateTest extends TestCase
 {
     public function testCommon()
     {
