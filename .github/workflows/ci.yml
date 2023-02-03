@@ -74,6 +74,10 @@ jobs:
             composer-${{ runner.os }}-
             composer-
 
+      - name: Remove incompatible tools
+        run: composer remove amphp/php-cs-fixer-config
+        if: matrix.php-version != '8.2'
+
       - name: Install dependencies
         uses: nick-invision/retry@v2
         with:
@@ -91,4 +95,4 @@ jobs:
         env:
           PHP_CS_FIXER_IGNORE_ENV: 1
         run: vendor/bin/php-cs-fixer --diff --dry-run -v fix
-        if: runner.os != 'Windows'
+        if: runner.os != 'Windows' && matrix.php-version == '8.2'
