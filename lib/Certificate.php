@@ -42,16 +42,16 @@ class Certificate
             if (!$cert = @\openssl_x509_read($pem)) {
                 throw new InvalidCertificateException("Invalid PEM encoded certificate!");
             }
-        } else {
-            if (\is_resource($pem)) {
-                if (\get_resource_type($pem) !== "OpenSSL X.509") {
-                    throw new InvalidCertificateException("Invalid resource of type other than 'OpenSSL X.509'!");
-                }
-
-                $cert = $pem;
-            } else {
-                throw new \InvalidArgumentException("Invalid variable type, expected string|resource, got " . \gettype($pem));
+        } elseif ($pem instanceof \OpenSSLCertificate) {
+            $cert = $pem;
+        } elseif (\is_resource($pem)) {
+            if (\get_resource_type($pem) !== "OpenSSL X.509") {
+                throw new InvalidCertificateException("Invalid resource of type other than 'OpenSSL X.509'!");
             }
+
+            $cert = $pem;
+        } else {
+            throw new \InvalidArgumentException("Invalid variable type, expected string|resource, got " . \gettype($pem));
         }
 
         if (\openssl_x509_export($pem, $this->pem) === false) {
