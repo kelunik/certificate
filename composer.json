@@ -30,7 +30,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Kelunik\\Certificate\\": "lib"
+            "Kelunik\\Certificate\\": "src"
         }
     },
     "extra": {
