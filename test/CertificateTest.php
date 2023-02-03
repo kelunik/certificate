@@ -11,7 +11,7 @@ class CertificateTest extends TestCase
         $raw = \file_get_contents(__DIR__ . "/data/kelunik.com.pem");
         $cert = new Certificate($raw);
 
-        $this->assertSame("169720774684715272062536722760177705551647", $cert->getSerialNumber());
+        $this->assertSame("0x01F2C3B8370988B331131E08ACD5CE10071F", $cert->getSerialNumber());
         $this->assertSame("US", $cert->getIssuer()->getCountry());
         $this->assertSame("Let's Encrypt", $cert->getIssuer()->getOrganizationName());
         $this->assertSame("Let's Encrypt Authority X1", $cert->getIssuer()->getCommonName());
@@ -59,43 +59,38 @@ class CertificateTest extends TestCase
         $this->assertSame($pem, Certificate::derToPem($der));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testInvalidDerType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         Certificate::derToPem(0);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testInvalidPemType()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         Certificate::pemToDer(0);
     }
 
-    /**
-     * @expectedException \Kelunik\Certificate\InvalidCertificateException
-     */
     public function testInvalidPem()
     {
+        $this->expectException(InvalidCertificateException::class);
+
         Certificate::pemToDer("");
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testNonString()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         new Certificate(0);
     }
 
-    /**
-     * @expectedException \Kelunik\Certificate\InvalidCertificateException
-     */
     public function testInvalidPemConstruct()
     {
+        $this->expectException(InvalidCertificateException::class);
+
         new Certificate("");
     }
 
