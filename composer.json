@@ -25,7 +25,7 @@
         "ext-openssl": "*"
     },
     "require-dev": {
-        "amphp/php-cs-fixer-config": "dev-master",
+        "amphp/php-cs-fixer-config": "^2",
         "phpunit/phpunit": "^6 | 7 | ^8 | ^9"
     },
     "autoload": {

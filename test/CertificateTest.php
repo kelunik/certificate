@@ -1,4 +1,5 @@
-<?php /** @noinspection PhpUnhandledExceptionInspection */
+<?php declare(strict_types=1);
+/** @noinspection PhpUnhandledExceptionInspection */
 
 namespace Kelunik\Certificate;
 
