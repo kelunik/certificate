@@ -2,8 +2,6 @@
     "name": "kelunik/certificate",
     "description": "Access certificate details and transform between different formats.",
     "type": "library",
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "license": "MIT",
     "authors": [
         {
