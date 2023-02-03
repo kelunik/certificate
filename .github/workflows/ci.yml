@@ -75,7 +75,7 @@ jobs:
             composer-
 
       - name: Remove incompatible tools
-        run: composer remove amphp/php-cs-fixer-config
+        run: composer remove --dev amphp/php-cs-fixer-config
         if: matrix.php-version != '8.2'
 
       - name: Install dependencies
